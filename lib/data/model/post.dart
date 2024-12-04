@@ -16,7 +16,7 @@ class Post {
   });
 
   ///fromJason
-  Post.fromJason(Map<String, dynamic> map)
+  Post.fromJson(Map<String, dynamic> map)
       : this(
           id: map["id"],
           title: map["title"],
@@ -27,7 +27,7 @@ class Post {
         );
 
   ///toJason
-  Map<String, dynamic> toJason() {
+  Map<String, dynamic> toJson() {
     return {
       "id": id,
       "title": title,

@@ -19,7 +19,7 @@ class PostRepository {
           "id": doc.id,
           ...map,
         };
-        return Post.fromJason(newMap);
+        return Post.fromJson(newMap);
       }).toList();
     } catch (e) {
       print(e);
@@ -73,7 +73,7 @@ class PostRepository {
       final docRef = collectionRef.doc(id);
       //데이터 가져오기
       final doc = await docRef.get();
-      return Post.fromJason({
+      return Post.fromJson({
         "id": doc.id,
         ...doc.data()!,
       });
