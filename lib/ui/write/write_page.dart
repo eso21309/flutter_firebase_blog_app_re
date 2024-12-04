@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_firebase_blog_app_re/data/model/post.dart';
+import 'package:flutter_firebase_blog_app_re/ui/write/write_view_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class WritePage extends StatefulWidget {
+class WritePage extends ConsumerStatefulWidget {
+  Post? post;
+  WritePage(this.post);
+
   @override
-  State<WritePage> createState() => _WritePageState();
+  ConsumerState<WritePage> createState() => _WritePageState();
 }
 
-class _WritePageState extends State<WritePage> {
+class _WritePageState extends ConsumerState<WritePage> {
   //제목, 작성자, 내용
   TextEditingController writeController = TextEditingController();
   TextEditingController titleController = TextEditingController();
@@ -25,6 +31,13 @@ class _WritePageState extends State<WritePage> {
 
   @override
   Widget build(BuildContext context) {
+    final writeState = ref.watch(WriteViewModelProvider(widget.post));
+    if (writeState.isWriting) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: CircularProgressIndicator(),
+      );
+    }
     return GestureDetector(
       onTap: () {
         //키보드가 올라와있을 때 화면의 다른 부분을 터치하면 키보드를 내리는(숨기는) 기능
@@ -34,11 +47,23 @@ class _WritePageState extends State<WritePage> {
         appBar: AppBar(
           actions: [
             GestureDetector(
-              onTap: () {
+              onTap: () async {
                 print("완료되는지 콘솔에서 항상 확인해");
                 //탭했을때 Validation 체크 해야함
                 final result = formKey.currentState?.validate() ?? false;
                 //Body Form에도 'key: formKey,'를 넣어줘야 작동함
+                if (result) {
+                  final vm =
+                      ref.read(WriteViewModelProvider(widget.post).notifier);
+                  final insertResult = await vm.insert(
+                    writer: writeController.text,
+                    title: titleController.text,
+                    content: contentController.text,
+                  );
+                  if (insertResult) {
+                    Navigator.pop(context, true);
+                  }
+                }
               },
               child: Container(
                 width: 50,

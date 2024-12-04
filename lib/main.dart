@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_blog_app_re/data/rerpsitory/post_repository.dart';
 import 'package:flutter_firebase_blog_app_re/firebase_options.dart';
 import 'package:flutter_firebase_blog_app_re/ui/home/home_page.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
@@ -14,6 +14,12 @@ void main() async {
 
   //1. 터미널에 flutter pub add flutter_riverpod  넣어서 리버팟 설치하기
   //2. const MyApp()를 >>> ProviderScope로 변경하기 : 뷰모델을 리버팟 패키지가 관리할 수 있게 MyApp을 감싸주기
+
+  // postRepository를 테스트 하기 위해서 앱 실행 전에 코드 추가
+  // 앱 재실행 후 디버그콘솔 확인해서 제대로 프린트 되는지 확인
+  // final postRepository = PostRepository();
+  // await postRepository.getAll();
+
   runApp(ProviderScope(child: MyApp()));
 }
 

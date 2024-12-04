@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_blog_app_re/data/model/post.dart';
+import 'package:flutter_firebase_blog_app_re/ui/detail/detail_view_model.dart';
 import 'package:flutter_firebase_blog_app_re/ui/write/write_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends ConsumerWidget {
+  DetailPage(this.post);
+  Post post;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(detailViewModelProvider(post));
+
     return Scaffold(
         appBar: AppBar(
           actions: [
-            iconButton(Icons.delete, () {
+            iconButton(Icons.delete, () async {
               print("삭제 아이콘 터치됨");
+              final vm = ref.read(detailViewModelProvider(post).notifier);
+              final result = await vm.deletePost();
+              if (result) {
+                Navigator.pop(context);
+              }
             }),
             //(){} >>>> "아무것도 안 할거야"라는 의미의 빈 함수
             //실 사용시, onTap을 안넣는 이유는 순서대로 작업하기 때문에 자동으로 인식해서이다.
             iconButton(Icons.edit, () {
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
-                  return WritePage();
+                  return WritePage(post);
                 },
               ));
             }),
@@ -28,7 +41,7 @@ class DetailPage extends StatelessWidget {
               //AspectRatio로 감싸고 aspectRation 속성 입력해주면 끝!
               aspectRatio: 1 / 1.2,
               child: Image.network(
-                "https://picsum.photos/seed/picsum/200/300",
+                state.imageUrl,
                 fit: BoxFit.cover,
               ),
             ),
@@ -39,7 +52,7 @@ class DetailPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Today I learned",
+                    state.title,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -47,7 +60,7 @@ class DetailPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "홍승현",
+                    state.writer,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -56,7 +69,7 @@ class DetailPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "2024.12.02",
+                    state.createdAt.toIso8601String(),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
@@ -65,7 +78,8 @@ class DetailPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "Flutter 그리드 뷰를 배웠습니다." * 20, //글자 반복숫자 넣어주기 오!
+                    state.content,
+                    // "Flutter 그리드 뷰를 배웠습니다." * 20, //글자 반복숫자 넣어주기 오!
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.normal,
