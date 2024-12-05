@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_firebase_blog_app_re/data/model/post.dart';
 import 'package:flutter_firebase_blog_app_re/ui/write/write_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 class WritePage extends ConsumerStatefulWidget {
   Post? post;
@@ -14,9 +15,15 @@ class WritePage extends ConsumerStatefulWidget {
 
 class _WritePageState extends ConsumerState<WritePage> {
   //제목, 작성자, 내용
-  TextEditingController writeController = TextEditingController();
-  TextEditingController titleController = TextEditingController();
-  TextEditingController contentController = TextEditingController();
+  late TextEditingController writeController = TextEditingController(
+    text: widget.post?.writer ?? "",
+  );
+  late TextEditingController titleController = TextEditingController(
+    text: widget.post?.title ?? "",
+  );
+  late TextEditingController contentController = TextEditingController(
+    text: widget.post?.content ?? "",
+  );
 
   //Form 위젯 사용하기 위해 글로벌키 넣어줘야함. Validation 체크를 위함
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -32,10 +39,11 @@ class _WritePageState extends ConsumerState<WritePage> {
   @override
   Widget build(BuildContext context) {
     final writeState = ref.watch(WriteViewModelProvider(widget.post));
+    final vm = ref.read(WriteViewModelProvider(widget.post).notifier);
     if (writeState.isWriting) {
       return Scaffold(
         appBar: AppBar(),
-        body: CircularProgressIndicator(),
+        body: Center(child: CircularProgressIndicator()),
       );
     }
     return GestureDetector(
@@ -134,16 +142,34 @@ class _WritePageState extends ConsumerState<WritePage> {
               //컨테이너 만들면 부모 속성 따라가므로 Align으로 씌워주어야함 //alignment 속성 사용
               Align(
                 alignment: Alignment.centerRight,
-                child: Container(
-                  //1. Container로 먼저 도형 만들기
-                  width: 100,
-                  height: 100,
-                  color: Colors.grey[300],
-                  child: Icon(
-                    Icons.image,
-                    color: Colors.grey[600],
-                  ),
-                  //2. Container 안에 아이콘 넣고 싶으면 child 속성에 Icon 넣기
+                child: GestureDetector(
+                  onTap: () async {
+                    // 이미지 피커 객체 생성
+                    ImagePicker imagePicker = ImagePicker();
+                    // 이미지 피커 객체의 pickImage 메서드 호출
+                    XFile? xFile = await imagePicker.pickImage(
+                        source: ImageSource.gallery);
+                    print("경로 : ${xFile?.path}");
+                    if (xFile != null) {
+                      vm.uploadImage(xFile);
+                    }
+                  },
+                  child: writeState.imageUrl == null
+                      ? Container(
+                          //1. Container로 먼저 도형 만들기
+                          width: 100,
+                          height: 100,
+                          color: Colors.grey[300],
+                          child: Icon(
+                            Icons.image,
+                            color: Colors.grey[600],
+                          ),
+                          //2. Container 안에 아이콘 넣고 싶으면 child 속성에 Icon 넣기
+                        )
+                      : SizedBox(
+                          height: 100,
+                          child: Image.network(writeState.imageUrl!),
+                        ),
                 ),
               )
             ],

@@ -132,4 +132,42 @@ class PostRepository {
       return false;
     }
   }
+
+  Stream<List<Post>> postListStream() {
+    final firestore = FirebaseFirestore.instance;
+    final collectionRef = firestore
+        .collection("posts")
+        .orderBy("createdAt", descending: true); //내림차순
+    final stream = collectionRef.snapshots();
+
+    final newStream = stream.map(
+      (event) {
+        return event.docs.map((e) {
+          return Post.fromJson({
+            "id": e.id,
+            ...e.data(),
+          });
+        }).toList();
+      },
+    );
+
+    return newStream;
+  }
+
+  Stream<Post?> postStream(String id) {
+    final firestore = FirebaseFirestore.instance;
+    final collectionRef = firestore.collection("posts");
+    final docRef = collectionRef.doc(id);
+    final stream = docRef.snapshots();
+    final newStream = stream.map((e) {
+      if (e.data() == null) {
+        return null;
+      }
+      return Post.fromJson({
+        "id": e.id,
+        ...e.data()!,
+      });
+    });
+    return newStream;
+  }
 }
