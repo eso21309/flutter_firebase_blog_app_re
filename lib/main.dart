@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase_blog_app_re/data/rerpsitory/post_repository.dart';
 import 'package:flutter_firebase_blog_app_re/firebase_options.dart';
 import 'package:flutter_firebase_blog_app_re/ui/home/home_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +18,14 @@ void main() async {
   // 앱 재실행 후 디버그콘솔 확인해서 제대로 프린트 되는지 확인
   // final postRepository = PostRepository();
   // await postRepository.getAll();
+
+  // final postRepo = PostRepository();
+  // await postRepo.insert(
+  //   title: "title",
+  //   content: "content",
+  //   writer: "writer",
+  //   imageUrl: "https://picsum.photos/200/300",
+  // );
 
   runApp(ProviderScope(child: MyApp()));
 }

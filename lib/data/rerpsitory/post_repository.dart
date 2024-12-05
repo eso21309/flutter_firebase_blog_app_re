@@ -5,7 +5,7 @@ class PostRepository {
   Future<List<Post>?> getAll() //게시물 목록 전체를 가져오므로 List<Post>
   async {
     try {
-//1. 파이어스토어 인스턴스 가져오기
+      //1. 파이어스토어 인스턴스 가져오기
       final firestore = FirebaseFirestore.instance;
       //2. 컬렉션 참조 만들기
       final collectionRef = firestore.collection("posts");

@@ -9,11 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class HomeViewModel extends Notifier<List<Post>> {
   @override
   List<Post> build() {
-    getAllPosts();
+    // getAllPosts();
     return [];
   }
 
-  void getAllPosts() async {
+  Future<void> getAllPosts() async {
     final postRepo = PostRepository();
     final posts = await postRepo.getAll();
     state = posts ?? [];
@@ -21,6 +21,6 @@ class HomeViewModel extends Notifier<List<Post>> {
 }
 
 //3. 뷰모델 관리자 만들기
-final HomeViewModelProvider = NotifierProvider<HomeViewModel, List<Post>>(() {
+final homeViewModelProvider = NotifierProvider<HomeViewModel, List<Post>>(() {
   return HomeViewModel();
 });

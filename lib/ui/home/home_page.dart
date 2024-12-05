@@ -5,6 +5,7 @@ import 'package:flutter_firebase_blog_app_re/ui/home/home_view_model.dart';
 import 'package:flutter_firebase_blog_app_re/ui/write/write_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+//ConsumerWidget : 상태를 감지하는 위젯
 class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,8 +24,9 @@ class HomePage extends ConsumerWidget {
                 },
               ),
             );
+            print("WritePage 결과값: $result");
             if (result == true) {
-              ref.read(HomeViewModelProvider.notifier).getAllPosts();
+              ref.read(homeViewModelProvider.notifier).getAllPosts();
             }
           },
           child: Icon(Icons.edit),
@@ -43,7 +45,8 @@ class HomePage extends ConsumerWidget {
               Consumer(
                 //리스트뷰를 Consumer로 감싸고 빌드함수 안에 홈뷰모델 상태 가져오기
                 builder: (context, ref, child) {
-                  final posts = ref.watch(HomeViewModelProvider);
+                  final posts = ref.watch(homeViewModelProvider);
+                  // ref.watch로 HomeViewModel의 상태를 관찰
                   return Expanded(
                     child: ListView.separated(
                       //listview의 separated는 리스트 사이 간격을 한번에 정할 수 있음
@@ -56,7 +59,8 @@ class HomePage extends ConsumerWidget {
                       //separate 사이에 어떤걸 넣을지 정의 : 마진값 혹은 구분선을 넣음
                       itemBuilder: (context, index) {
                         final post = posts[index];
-                        return item(post);
+                        // posts 게시글 목록중 [idnex]번호의 게시물을 post에 담아
+                        return item(post); // 그 post를 item으로 만들어서 카드 위젯을 생성해!
                       },
                     ),
                   );

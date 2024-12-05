@@ -15,7 +15,7 @@ class Post {
     required this.createdAt,
   });
 
-  ///fromJason
+  ///fromJson
   Post.fromJson(Map<String, dynamic> map)
       : this(
           id: map["id"],
@@ -23,10 +23,10 @@ class Post {
           content: map["content"],
           writer: map["writer"],
           imageUrl: map["imageUrl"],
-          createdAt: DateTime.parse(map["createAt"]),
+          createdAt: DateTime.parse(map["createdAt"]),
         );
 
-  ///toJason
+  ///toJson
   Map<String, dynamic> toJson() {
     return {
       "id": id,
